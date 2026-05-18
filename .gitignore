@@ -13,3 +13,6 @@
 
 # IDE / OS
 .DS_Store
+
+# Claude Code ローカル設定（マシン固有パスを含む）
+.claude/settings.local.json
