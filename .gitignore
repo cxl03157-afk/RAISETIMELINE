@@ -1,0 +1,15 @@
+# Terraform
+*.tfstate
+*.tfstate.backup
+*.tfvars
+.terraform/
+
+# 秘密鍵
+*.pem
+
+# 環境変数
+.env
+.env.local
+
+# IDE / OS
+.DS_Store
