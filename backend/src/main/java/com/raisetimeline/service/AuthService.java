@@ -4,6 +4,7 @@ import com.raisetimeline.dto.request.LoginRequest;
 import com.raisetimeline.dto.request.RegisterRequest;
 import com.raisetimeline.dto.response.AuthResponse;
 import com.raisetimeline.dto.response.UserResponse;
+import com.raisetimeline.entity.RefreshToken;
 import com.raisetimeline.entity.User;
 import com.raisetimeline.exception.DuplicateException;
 import com.raisetimeline.repository.UserRepository;
@@ -21,6 +22,7 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final RefreshTokenService refreshTokenService;
 
     @Transactional
     public AuthResponse register(RegisterRequest req) {
@@ -37,17 +39,36 @@ public class AuthService {
                 .passwordHash(passwordEncoder.encode(req.getPassword()))
                 .build();
         userRepository.save(user);
-        String token = jwtUtil.generateToken(user.getEmail());
-        return new AuthResponse(token, new UserResponse(user));
+        return buildAuthResponse(user);
     }
 
+    @Transactional
     public AuthResponse login(LoginRequest req) {
         User user = userRepository.findByEmail(req.getEmail())
                 .orElseThrow(() -> new BadCredentialsException("メールアドレスまたはパスワードが正しくありません"));
         if (!passwordEncoder.matches(req.getPassword(), user.getPasswordHash())) {
             throw new BadCredentialsException("メールアドレスまたはパスワードが正しくありません");
         }
-        String token = jwtUtil.generateToken(user.getEmail());
-        return new AuthResponse(token, new UserResponse(user));
+        return buildAuthResponse(user);
+    }
+
+    @Transactional
+    public AuthResponse refresh(String refreshTokenValue) {
+        RefreshToken old = refreshTokenService.validate(refreshTokenValue);
+        RefreshToken newToken = refreshTokenService.rotate(old);
+        String accessToken = jwtUtil.generateToken(old.getUser().getEmail());
+        return new AuthResponse(accessToken, newToken.getToken(), new UserResponse(old.getUser()));
+    }
+
+    @Transactional
+    public void logout(String refreshTokenValue) {
+        RefreshToken token = refreshTokenService.validate(refreshTokenValue);
+        refreshTokenService.revokeAllByUser(token.getUser());
+    }
+
+    private AuthResponse buildAuthResponse(User user) {
+        String accessToken = jwtUtil.generateToken(user.getEmail());
+        RefreshToken refreshToken = refreshTokenService.create(user);
+        return new AuthResponse(accessToken, refreshToken.getToken(), new UserResponse(user));
     }
 }

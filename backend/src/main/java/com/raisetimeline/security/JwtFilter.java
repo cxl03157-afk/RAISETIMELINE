@@ -28,7 +28,11 @@ public class JwtFilter extends OncePerRequestFilter {
         String header = request.getHeader("Authorization");
         if (header != null && header.startsWith("Bearer ")) {
             String token = header.substring(7);
-            if (jwtUtil.isValid(token) && SecurityContextHolder.getContext().getAuthentication() == null) {
+            if (!jwtUtil.isValid(token)) {
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "トークンが無効または期限切れです");
+                return;
+            }
+            if (SecurityContextHolder.getContext().getAuthentication() == null) {
                 String email = jwtUtil.extractEmail(token);
                 UserDetails userDetails = userDetailsService.loadUserByUsername(email);
                 UsernamePasswordAuthenticationToken auth =

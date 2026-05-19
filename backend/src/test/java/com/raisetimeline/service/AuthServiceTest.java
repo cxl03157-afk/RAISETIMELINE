@@ -3,6 +3,7 @@ package com.raisetimeline.service;
 import com.raisetimeline.dto.request.LoginRequest;
 import com.raisetimeline.dto.request.RegisterRequest;
 import com.raisetimeline.dto.response.AuthResponse;
+import com.raisetimeline.entity.RefreshToken;
 import com.raisetimeline.entity.User;
 import com.raisetimeline.exception.DuplicateException;
 import com.raisetimeline.repository.UserRepository;
@@ -17,6 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
@@ -29,6 +31,7 @@ class AuthServiceTest {
     @Mock UserRepository userRepository;
     @Mock PasswordEncoder passwordEncoder;
     @Mock JwtUtil jwtUtil;
+    @Mock RefreshTokenService refreshTokenService;
 
     @InjectMocks AuthService authService;
 
@@ -44,8 +47,11 @@ class AuthServiceTest {
     }
 
     @Test
-    @DisplayName("正常登録: JWT トークンとユーザー情報が返る")
+    @DisplayName("正常登録: JWT とリフレッシュトークンとユーザー情報が返る")
     void register_success() {
+        RefreshToken mockRefreshToken = RefreshToken.builder()
+                .token("refresh-uuid").expiresAt(LocalDateTime.now().plusDays(7)).build();
+
         when(userRepository.existsByEmail(any())).thenReturn(false);
         when(userRepository.existsByUsername(any())).thenReturn(false);
         when(passwordEncoder.encode(any())).thenReturn("hashed");
@@ -55,10 +61,12 @@ class AuthServiceTest {
             return u;
         });
         when(jwtUtil.generateToken(any())).thenReturn("mock-token");
+        when(refreshTokenService.create(any())).thenReturn(mockRefreshToken);
 
         AuthResponse res = authService.register(registerRequest);
 
         assertThat(res.getToken()).isEqualTo("mock-token");
+        assertThat(res.getRefreshToken()).isEqualTo("refresh-uuid");
         assertThat(res.getUser().getUsername()).isEqualTo("alice");
         verify(userRepository).save(any());
     }
@@ -85,7 +93,7 @@ class AuthServiceTest {
     }
 
     @Test
-    @DisplayName("正常ログイン: JWT トークンが返る")
+    @DisplayName("正常ログイン: JWT とリフレッシュトークンが返る")
     void login_success() {
         User user = User.builder()
                 .id(1L).email("alice@example.com").passwordHash("hashed")
@@ -93,14 +101,18 @@ class AuthServiceTest {
         LoginRequest req = new LoginRequest();
         req.setEmail("alice@example.com");
         req.setPassword("password123");
+        RefreshToken mockRefreshToken = RefreshToken.builder()
+                .token("refresh-uuid").expiresAt(LocalDateTime.now().plusDays(7)).build();
 
         when(userRepository.findByEmail("alice@example.com")).thenReturn(Optional.of(user));
         when(passwordEncoder.matches("password123", "hashed")).thenReturn(true);
         when(jwtUtil.generateToken(any())).thenReturn("mock-token");
+        when(refreshTokenService.create(any())).thenReturn(mockRefreshToken);
 
         AuthResponse res = authService.login(req);
 
         assertThat(res.getToken()).isEqualTo("mock-token");
+        assertThat(res.getRefreshToken()).isEqualTo("refresh-uuid");
     }
 
     @Test
