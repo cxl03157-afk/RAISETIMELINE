@@ -1,6 +1,7 @@
 package com.raisetimeline.controller;
 
 import com.raisetimeline.dto.request.LoginRequest;
+import com.raisetimeline.dto.request.RefreshTokenRequest;
 import com.raisetimeline.dto.request.RegisterRequest;
 import com.raisetimeline.dto.response.AuthResponse;
 import com.raisetimeline.service.AuthService;
@@ -25,5 +26,16 @@ public class AuthController {
     @PostMapping("/login")
     public AuthResponse login(@Valid @RequestBody LoginRequest req) {
         return authService.login(req);
+    }
+
+    @PostMapping("/refresh")
+    public AuthResponse refresh(@Valid @RequestBody RefreshTokenRequest req) {
+        return authService.refresh(req.getRefreshToken());
+    }
+
+    @PostMapping("/logout")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void logout(@Valid @RequestBody RefreshTokenRequest req) {
+        authService.logout(req.getRefreshToken());
     }
 }
