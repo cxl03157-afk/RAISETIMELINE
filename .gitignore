@@ -16,3 +16,8 @@
 
 # Claude Code ローカル設定（マシン固有パスを含む）
 .claude/settings.local.json
+
+# Backend
+backend/build/
+backend/.gradle/
+backend/gradle/wrapper/gradle-wrapper.jar
