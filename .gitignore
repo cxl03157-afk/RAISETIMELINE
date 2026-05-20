@@ -21,3 +21,11 @@
 backend/build/
 backend/.gradle/
 backend/gradle/wrapper/gradle-wrapper.jar
+
+# Playwright MCP
+.mcp.json
+.playwright-mcp/
+
+# Playwright スクリーンショット
+*.png
+*.jpeg

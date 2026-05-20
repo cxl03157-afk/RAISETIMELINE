@@ -24,23 +24,27 @@ public class PostService {
     private final PostRepository postRepository;
     private final UserService userService;
 
+    @Transactional(readOnly = true)
     public Page<PostResponse> getTimeline(int page, int size) {
         return postRepository.findAllWithUser(PageRequest.of(page, size))
                 .map(PostResponse::new);
     }
 
+    @Transactional(readOnly = true)
     public Page<PostResponse> getFollowingTimeline(String email, int page, int size) {
         User user = userService.getByEmail(email);
         return postRepository.findFollowingPosts(user.getId(), PageRequest.of(page, size))
                 .map(PostResponse::new);
     }
 
+    @Transactional(readOnly = true)
     public List<PostResponse> getUserPosts(String username) {
         return postRepository.findByUsernameWithImages(username).stream()
                 .map(PostResponse::new)
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public PostResponse getPost(Long postId) {
         return new PostResponse(findById(postId));
     }
