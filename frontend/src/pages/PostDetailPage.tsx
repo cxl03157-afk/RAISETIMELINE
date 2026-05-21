@@ -211,6 +211,7 @@ export default function PostDetailPage() {
               onDelete={() => {}}
               onLike={handleLike}
               onCommentClick={() => {}}
+              onUserClick={(p) => navigate(`/users/${p.user.username}`)}
             />
 
             <Divider />

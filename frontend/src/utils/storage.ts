@@ -39,6 +39,11 @@ export function clearAuth(): void {
   localStorage.removeItem(USER_KEY)
 }
 
+// USER_KEY のみ更新。accessToken / refreshToken は別キーのため影響しない。
+export function updateStoredUser(user: UserResponse): void {
+  localStorage.setItem(USER_KEY, JSON.stringify(user))
+}
+
 export function isAuthenticated(): boolean {
   return !!getAccessToken()
 }
