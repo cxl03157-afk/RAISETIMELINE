@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import {
   AppBar,
   Avatar,
@@ -9,6 +10,7 @@ import {
   Toolbar,
   Typography,
 } from '@mui/material'
+import SearchIcon from '@mui/icons-material/Search'
 import type { UserResponse } from '../types/auth'
 
 const AVATAR_COLORS = [
@@ -27,6 +29,7 @@ interface AppNavbarProps {
 }
 
 export default function AppNavbar({ user, onLogout }: AppNavbarProps) {
+  const navigate = useNavigate()
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
 
   return (
@@ -47,7 +50,14 @@ export default function AppNavbar({ user, onLogout }: AppNavbarProps) {
           RAISETIMELINE
         </Typography>
 
-        <Box>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <IconButton
+            onClick={() => navigate('/search')}
+            size="small"
+            sx={{ color: '#536471' }}
+          >
+            <SearchIcon fontSize="small" />
+          </IconButton>
           <IconButton onClick={(e) => setAnchorEl(e.currentTarget)} size="small">
             <Avatar
               src={user.avatarUrl ?? undefined}
@@ -71,6 +81,12 @@ export default function AppNavbar({ user, onLogout }: AppNavbarProps) {
           >
             <MenuItem disabled sx={{ fontSize: 14, opacity: 1, fontWeight: 700 }}>
               @{user.username}
+            </MenuItem>
+            <MenuItem
+              onClick={() => { setAnchorEl(null); navigate(`/users/${user.username}`) }}
+              sx={{ fontSize: 14 }}
+            >
+              プロフィール
             </MenuItem>
             <MenuItem
               onClick={() => { setAnchorEl(null); onLogout() }}

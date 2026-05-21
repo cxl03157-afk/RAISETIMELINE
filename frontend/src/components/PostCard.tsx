@@ -32,6 +32,7 @@ interface PostCardProps {
   onDelete: (post: PostResponse) => void
   onLike: (post: PostResponse) => void
   onCommentClick: (post: PostResponse) => void
+  onUserClick?: (post: PostResponse) => void
 }
 
 export default function PostCard({
@@ -41,6 +42,7 @@ export default function PostCard({
   onDelete,
   onLike,
   onCommentClick,
+  onUserClick,
 }: PostCardProps) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const isOwn = post.user.id === currentUserId
@@ -61,12 +63,14 @@ export default function PostCard({
       <Avatar
         src={post.user.avatarUrl ?? undefined}
         alt={post.user.displayName}
+        onClick={() => onUserClick?.(post)}
         sx={{
           width: 40,
           height: 40,
           bgcolor: avatarColor(post.user.displayName),
           fontSize: 16,
           flexShrink: 0,
+          cursor: onUserClick ? 'pointer' : 'default',
         }}
       >
         {post.user.displayName[0]}
@@ -83,18 +87,30 @@ export default function PostCard({
             mb: '2px',
           }}
         >
-          <Typography
+          <Box
             component="span"
-            sx={{ fontWeight: 700, fontSize: 15, color: '#0f1419', whiteSpace: 'nowrap' }}
+            onClick={() => onUserClick?.(post)}
+            sx={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '4px',
+              cursor: onUserClick ? 'pointer' : 'default',
+              '&:hover': onUserClick ? { opacity: 0.8 } : {},
+            }}
           >
-            {post.user.displayName}
-          </Typography>
-          <Typography
-            component="span"
-            sx={{ fontSize: 14, color: '#536471', whiteSpace: 'nowrap' }}
-          >
-            @{post.user.username}
-          </Typography>
+            <Typography
+              component="span"
+              sx={{ fontWeight: 700, fontSize: 15, color: '#0f1419', whiteSpace: 'nowrap' }}
+            >
+              {post.user.displayName}
+            </Typography>
+            <Typography
+              component="span"
+              sx={{ fontSize: 14, color: '#536471', whiteSpace: 'nowrap' }}
+            >
+              @{post.user.username}
+            </Typography>
+          </Box>
           <Typography component="span" sx={{ fontSize: 14, color: '#536471' }}>
             ·
           </Typography>

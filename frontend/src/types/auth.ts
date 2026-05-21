@@ -4,6 +4,9 @@ export interface UserResponse {
   displayName: string
   avatarUrl: string | null
   bio: string | null
+  followingCount: number
+  followersCount: number
+  followedByMe: boolean
   createdAt: string
 }
 

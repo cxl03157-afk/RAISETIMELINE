@@ -4,6 +4,9 @@ import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import TimelinePage from './pages/TimelinePage'
 import PostDetailPage from './pages/PostDetailPage'
+import ProfilePage from './pages/ProfilePage'
+import SearchPage from './pages/SearchPage'
+import FollowListPage from './pages/FollowListPage'
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
   if (!isAuthenticated()) {
@@ -53,6 +56,38 @@ export default function App() {
           element={
             <RequireAuth>
               <PostDetailPage />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/users/:username"
+          element={
+            <RequireAuth>
+              <ProfilePage />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/users/:username/following"
+          element={
+            <RequireAuth>
+              <FollowListPage />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/users/:username/followers"
+          element={
+            <RequireAuth>
+              <FollowListPage />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/search"
+          element={
+            <RequireAuth>
+              <SearchPage />
             </RequireAuth>
           }
         />

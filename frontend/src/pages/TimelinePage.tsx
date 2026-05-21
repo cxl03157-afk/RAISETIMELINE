@@ -313,6 +313,7 @@ export default function TimelinePage() {
                 onDelete={(p) => setDeleteTarget(p)}
                 onLike={handleLike}
                 onCommentClick={(p) => navigate(`/posts/${p.id}`)}
+                onUserClick={(p) => navigate(`/users/${p.user.username}`)}
               />
             ))}
 

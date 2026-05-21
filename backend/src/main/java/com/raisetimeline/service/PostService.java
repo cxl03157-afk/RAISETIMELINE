@@ -42,10 +42,10 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public List<PostResponse> getUserPosts(String username) {
-        return postRepository.findByUsernameWithImages(username).stream()
-                .map(PostResponse::new)
-                .toList();
+    public List<PostResponse> getUserPosts(String username, String email) {
+        List<Post> posts = postRepository.findByUsernameWithImages(username);
+        Set<Long> likedIds = getLikedPostIds(email, posts);
+        return posts.stream().map(p -> new PostResponse(p, likedIds.contains(p.getId()))).toList();
     }
 
     @Transactional(readOnly = true)
