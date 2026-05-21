@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { isAuthenticated } from './utils/storage'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
-import HomePage from './pages/HomePage'
+import TimelinePage from './pages/TimelinePage'
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
   if (!isAuthenticated()) {
@@ -43,7 +43,7 @@ export default function App() {
           path="/home"
           element={
             <RequireAuth>
-              <HomePage />
+              <TimelinePage />
             </RequireAuth>
           }
         />
