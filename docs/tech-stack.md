@@ -9,7 +9,7 @@
 | Node.js | 25.9.0 | JavaScript ランタイム |
 | React | 19 | UI フレームワーク |
 | TypeScript | 5.9 | 型安全な JavaScript |
-| Vite | 7 | ビルドツール・開発サーバー |
+| Vite | 8 | ビルドツール・開発サーバー |
 | Material UI | 7 | UI コンポーネントライブラリ |
 | fetch API | ブラウザ標準 | バックエンド API 通信 |
 
