@@ -45,6 +45,11 @@ export async function updatePost(
   return handleResponse<PostResponse>(res)
 }
 
+export async function getPost(postId: number): Promise<PostResponse> {
+  const res = await fetchWithAuth(`/api/posts/${postId}`)
+  return handleResponse<PostResponse>(res)
+}
+
 export async function deletePost(postId: number): Promise<void> {
   const res = await fetchWithAuth(`/api/posts/${postId}`, { method: 'DELETE' })
   return handleResponse<void>(res)

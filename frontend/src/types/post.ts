@@ -14,6 +14,7 @@ export interface PostResponse {
   imageUrls: string[]
   likeCount: number
   commentCount: number
+  likedByCurrentUser: boolean
   createdAt: string
   updatedAt: string | null
 }

@@ -6,6 +6,7 @@ import com.raisetimeline.entity.Post;
 import com.raisetimeline.entity.User;
 import com.raisetimeline.exception.ForbiddenException;
 import com.raisetimeline.exception.ResourceNotFoundException;
+import com.raisetimeline.repository.LikeRepository;
 import com.raisetimeline.repository.PostRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -26,6 +27,7 @@ class PostServiceTest {
 
     @Mock PostRepository postRepository;
     @Mock UserService userService;
+    @Mock LikeRepository likeRepository;
 
     @InjectMocks PostService postService;
 
@@ -114,7 +116,7 @@ class PostServiceTest {
     void getPost_notFound() {
         when(postRepository.findById(99L)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> postService.getPost(99L))
+        assertThatThrownBy(() -> postService.getPost("alice@example.com", 99L))
                 .isInstanceOf(ResourceNotFoundException.class);
     }
 }

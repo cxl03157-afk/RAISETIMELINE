@@ -3,6 +3,7 @@ package com.raisetimeline.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Formula;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -47,4 +48,11 @@ public class Post {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<Like> likes = new ArrayList<>();
+
+    // Hibernate @Formula — JPA 標準外。ORM 移行時は要変更。
+    @Formula("(SELECT COUNT(*) FROM comments c WHERE c.post_id = id)")
+    private int commentCount;
+
+    @Formula("(SELECT COUNT(*) FROM likes l WHERE l.post_id = id)")
+    private int likeCount;
 }

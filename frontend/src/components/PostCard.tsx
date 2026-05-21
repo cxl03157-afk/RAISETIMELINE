@@ -8,6 +8,7 @@ import {
   Typography,
 } from '@mui/material'
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz'
+import FavoriteIcon from '@mui/icons-material/Favorite'
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'
 import ChatBubbleOutlineRoundedIcon from '@mui/icons-material/ChatBubbleOutlineRounded'
 import type { PostResponse } from '../types/post'
@@ -29,11 +30,21 @@ interface PostCardProps {
   currentUserId: number
   onEdit: (post: PostResponse) => void
   onDelete: (post: PostResponse) => void
+  onLike: (post: PostResponse) => void
+  onCommentClick: (post: PostResponse) => void
 }
 
-export default function PostCard({ post, currentUserId, onEdit, onDelete }: PostCardProps) {
+export default function PostCard({
+  post,
+  currentUserId,
+  onEdit,
+  onDelete,
+  onLike,
+  onCommentClick,
+}: PostCardProps) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const isOwn = post.user.id === currentUserId
+  const liked = post.likedByCurrentUser
 
   return (
     <Box
@@ -143,32 +154,64 @@ export default function PostCard({ post, currentUserId, onEdit, onDelete }: Post
           <ImageGrid imageUrls={post.imageUrls} />
         )}
 
-        {/* アクション（表示のみ） */}
+        {/* アクション */}
         <Box sx={{ display: 'flex', gap: 3, mt: 1 }}>
+          {/* コメントボタン */}
           <Box
+            component="button"
+            onClick={(e) => { e.stopPropagation(); onCommentClick(post) }}
             sx={{
               display: 'flex',
               alignItems: 'center',
               gap: '4px',
               color: '#536471',
               fontSize: 13,
-              pointerEvents: 'none',
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              p: 0,
+              borderRadius: '9999px',
+              '&:hover': { color: '#1D9BF0' },
+              '&:hover .comment-icon-bg': {
+                bgcolor: 'rgba(29,155,240,0.1)',
+                borderRadius: '9999px',
+              },
             }}
           >
-            <ChatBubbleOutlineRoundedIcon sx={{ fontSize: 18 }} />
+            <Box className="comment-icon-bg" sx={{ p: '4px', borderRadius: '9999px' }}>
+              <ChatBubbleOutlineRoundedIcon sx={{ fontSize: 18 }} />
+            </Box>
             <span>{post.commentCount}</span>
           </Box>
+
+          {/* いいねボタン */}
           <Box
+            component="button"
+            onClick={(e) => { e.stopPropagation(); onLike(post) }}
             sx={{
               display: 'flex',
               alignItems: 'center',
               gap: '4px',
-              color: '#536471',
+              color: liked ? '#f91880' : '#536471',
               fontSize: 13,
-              pointerEvents: 'none',
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              p: 0,
+              borderRadius: '9999px',
+              '&:hover': { color: '#f91880' },
+              '&:hover .like-icon-bg': {
+                bgcolor: 'rgba(249,24,128,0.1)',
+                borderRadius: '9999px',
+              },
             }}
           >
-            <FavoriteBorderIcon sx={{ fontSize: 18 }} />
+            <Box className="like-icon-bg" sx={{ p: '4px', borderRadius: '9999px' }}>
+              {liked
+                ? <FavoriteIcon sx={{ fontSize: 18 }} />
+                : <FavoriteBorderIcon sx={{ fontSize: 18 }} />
+              }
+            </Box>
             <span>{post.likeCount}</span>
           </Box>
         </Box>

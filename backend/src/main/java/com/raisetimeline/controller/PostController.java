@@ -22,9 +22,10 @@ public class PostController {
 
     @GetMapping
     public Page<PostResponse> getTimeline(
+            @AuthenticationPrincipal UserDetails principal,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
-        return postService.getTimeline(page, size);
+        return postService.getTimeline(principal.getUsername(), page, size);
     }
 
     @GetMapping("/following")
@@ -36,8 +37,10 @@ public class PostController {
     }
 
     @GetMapping("/{postId}")
-    public PostResponse getPost(@PathVariable Long postId) {
-        return postService.getPost(postId);
+    public PostResponse getPost(
+            @AuthenticationPrincipal UserDetails principal,
+            @PathVariable Long postId) {
+        return postService.getPost(principal.getUsername(), postId);
     }
 
     @PostMapping

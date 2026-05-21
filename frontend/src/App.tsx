@@ -3,6 +3,7 @@ import { isAuthenticated } from './utils/storage'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import TimelinePage from './pages/TimelinePage'
+import PostDetailPage from './pages/PostDetailPage'
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
   if (!isAuthenticated()) {
@@ -44,6 +45,14 @@ export default function App() {
           element={
             <RequireAuth>
               <TimelinePage />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/posts/:id"
+          element={
+            <RequireAuth>
+              <PostDetailPage />
             </RequireAuth>
           }
         />
