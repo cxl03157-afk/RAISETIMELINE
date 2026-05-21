@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { likePost, unlikePost } from '../api/likes'
 import {
   Alert,
   Box,
@@ -184,6 +185,26 @@ export default function TimelinePage() {
     }
   }
 
+  // --- いいね（楽観的更新） ---
+  async function handleLike(post: PostResponse) {
+    const liked = post.likedByCurrentUser
+    setPosts((prev) => prev.map((p) =>
+      p.id === post.id
+        ? { ...p, likedByCurrentUser: !liked, likeCount: p.likeCount + (liked ? -1 : 1) }
+        : p
+    ))
+    try {
+      if (liked) { await unlikePost(post.id) } else { await likePost(post.id) }
+    } catch {
+      setPosts((prev) => prev.map((p) =>
+        p.id === post.id
+          ? { ...p, likedByCurrentUser: liked, likeCount: p.likeCount + (liked ? 1 : -1) }
+          : p
+      ))
+      setError('いいね操作に失敗しました')
+    }
+  }
+
   // --- 投稿削除 ---
   async function handleConfirmDelete() {
     if (!deleteTarget) return
@@ -290,6 +311,8 @@ export default function TimelinePage() {
                 currentUserId={currentUser.id}
                 onEdit={(p) => { setEditingPost(p); setPostModalOpen(true) }}
                 onDelete={(p) => setDeleteTarget(p)}
+                onLike={handleLike}
+                onCommentClick={(p) => navigate(`/posts/${p.id}`)}
               />
             ))}
 

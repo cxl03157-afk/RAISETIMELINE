@@ -15,17 +15,25 @@ public class PostResponse {
     private final List<String> imageUrls;
     private final int likeCount;
     private final int commentCount;
+    private final boolean likedByCurrentUser;
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
 
+    // 変異操作用（create: 未いいね確定）
     public PostResponse(Post post) {
+        this(post, false);
+    }
+
+    // 読み取り用（timeline / getPost / update）
+    public PostResponse(Post post, boolean likedByCurrentUser) {
         this.id = post.getId();
         this.content = post.getContent();
         this.user = new UserResponse(post.getUser());
         this.imageUrls = post.getImages() == null ? List.of()
                 : post.getImages().stream().map(img -> img.getImageUrl()).toList();
-        this.likeCount = post.getLikes() == null ? 0 : post.getLikes().size();
-        this.commentCount = post.getComments() == null ? 0 : post.getComments().size();
+        this.likeCount = post.getLikeCount();
+        this.commentCount = post.getCommentCount();
+        this.likedByCurrentUser = likedByCurrentUser;
         this.createdAt = post.getCreatedAt();
         this.updatedAt = post.getUpdatedAt();
     }

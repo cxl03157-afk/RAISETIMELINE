@@ -6,16 +6,17 @@ import com.raisetimeline.entity.Post;
 import com.raisetimeline.entity.User;
 import com.raisetimeline.exception.ForbiddenException;
 import com.raisetimeline.exception.ResourceNotFoundException;
+import com.raisetimeline.repository.LikeRepository;
 import com.raisetimeline.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -23,18 +24,21 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final UserService userService;
+    private final LikeRepository likeRepository;
 
     @Transactional(readOnly = true)
-    public Page<PostResponse> getTimeline(int page, int size) {
-        return postRepository.findAllWithUser(PageRequest.of(page, size))
-                .map(PostResponse::new);
+    public Page<PostResponse> getTimeline(String email, int page, int size) {
+        Page<Post> posts = postRepository.findAllWithUser(PageRequest.of(page, size));
+        Set<Long> likedIds = getLikedPostIds(email, posts.getContent());
+        return posts.map(p -> new PostResponse(p, likedIds.contains(p.getId())));
     }
 
     @Transactional(readOnly = true)
     public Page<PostResponse> getFollowingTimeline(String email, int page, int size) {
         User user = userService.getByEmail(email);
-        return postRepository.findFollowingPosts(user.getId(), PageRequest.of(page, size))
-                .map(PostResponse::new);
+        Page<Post> posts = postRepository.findFollowingPosts(user.getId(), PageRequest.of(page, size));
+        Set<Long> likedIds = getLikedPostIds(email, posts.getContent());
+        return posts.map(p -> new PostResponse(p, likedIds.contains(p.getId())));
     }
 
     @Transactional(readOnly = true)
@@ -45,8 +49,10 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public PostResponse getPost(Long postId) {
-        return new PostResponse(findById(postId));
+    public PostResponse getPost(String email, Long postId) {
+        Post post = findById(postId);
+        boolean liked = likeRepository.existsByPostIdAndUserEmail(postId, email);
+        return new PostResponse(post, liked);
     }
 
     @Transactional
@@ -65,7 +71,8 @@ public class PostService {
         checkAuthor(post, email);
         post.setContent(req.getContent());
         post.setUpdatedAt(LocalDateTime.now());
-        return new PostResponse(post);
+        boolean liked = likeRepository.existsByPostIdAndUserEmail(postId, email);
+        return new PostResponse(post, liked);
     }
 
     @Transactional
@@ -84,5 +91,11 @@ public class PostService {
         if (!post.getUser().getEmail().equals(email)) {
             throw new ForbiddenException("この操作は投稿者のみ実行できます");
         }
+    }
+
+    private Set<Long> getLikedPostIds(String email, List<Post> posts) {
+        List<Long> ids = posts.stream().map(Post::getId).toList();
+        if (ids.isEmpty()) return Set.of();
+        return likeRepository.findLikedPostIdsByEmail(email, ids);
     }
 }
