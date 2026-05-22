@@ -45,7 +45,8 @@ export default function AppNavbar({ user, onLogout }: AppNavbarProps) {
     >
       <Toolbar sx={{ justifyContent: 'space-between', maxWidth: 600, width: '100%', mx: 'auto', px: 2 }}>
         <Typography
-          sx={{ fontWeight: 800, fontSize: 18, color: '#1D9BF0', letterSpacing: '-0.5px' }}
+          onClick={() => navigate('/home')}
+          sx={{ fontWeight: 800, fontSize: 18, color: '#1D9BF0', letterSpacing: '-0.5px', cursor: 'pointer' }}
         >
           RAISETIMELINE
         </Typography>

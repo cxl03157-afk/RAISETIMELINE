@@ -7,9 +7,13 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 import java.util.List;
 
@@ -43,12 +47,13 @@ public class PostController {
         return postService.getPost(principal.getUsername(), postId);
     }
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public PostResponse create(
             @AuthenticationPrincipal UserDetails principal,
-            @Valid @RequestBody CreatePostRequest req) {
-        return postService.create(principal.getUsername(), req);
+            @RequestParam(required = false) String content,
+            @RequestParam(required = false) List<MultipartFile> images) {
+        return postService.create(principal.getUsername(), content, images);
     }
 
     @PutMapping("/{postId}")
