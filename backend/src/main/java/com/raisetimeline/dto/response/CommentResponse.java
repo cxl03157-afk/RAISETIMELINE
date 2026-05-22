@@ -13,10 +13,10 @@ public class CommentResponse {
     private final UserResponse user;
     private final LocalDateTime createdAt;
 
-    public CommentResponse(Comment comment) {
+    public CommentResponse(Comment comment, String userAvatarUrl) {
         this.id = comment.getId();
         this.content = comment.getContent();
-        this.user = new UserResponse(comment.getUser());
+        this.user = new UserResponse(comment.getUser(), userAvatarUrl);
         this.createdAt = comment.getCreatedAt();
     }
 }

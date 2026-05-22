@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
+  Alert,
   Avatar,
   Box,
   Button,
@@ -11,6 +12,7 @@ import {
   Typography,
 } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
+import CameraAltIcon from '@mui/icons-material/CameraAlt'
 import type { UserResponse } from '../types/auth'
 
 const AVATAR_COLORS = [
@@ -28,18 +30,42 @@ interface EditProfileModalProps {
   user: UserResponse
   loading: boolean
   onClose: () => void
-  onSubmit: (displayName: string, bio: string) => void
+  onSubmit: (displayName: string, bio: string, avatarFile: File | null) => Promise<void>
 }
 
 export default function EditProfileModal({ open, user, loading, onClose, onSubmit }: EditProfileModalProps) {
   const [displayName, setDisplayName] = useState(user.displayName)
   const [bio, setBio] = useState(user.bio ?? '')
+  const [avatarFile, setAvatarFile] = useState<File | null>(null)
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null)
+  const [submitError, setSubmitError] = useState<string | null>(null)
+
+  useEffect(() => {
+    return () => {
+      if (avatarPreview) URL.revokeObjectURL(avatarPreview)
+    }
+  }, [avatarPreview])
+
+  function handleAvatarChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    if (avatarPreview) URL.revokeObjectURL(avatarPreview)
+    setAvatarFile(file)
+    setAvatarPreview(URL.createObjectURL(file))
+    setSubmitError(null)
+    e.target.value = ''
+  }
 
   const canSubmit = displayName.trim().length > 0 && displayName.length <= 50 && bio.length <= 160 && !loading
 
-  function handleSubmit() {
+  async function handleSubmit() {
     if (!canSubmit) return
-    onSubmit(displayName.trim(), bio)
+    setSubmitError(null)
+    try {
+      await onSubmit(displayName.trim(), bio, avatarFile)
+    } catch (e) {
+      setSubmitError(e instanceof Error ? e.message : '更新に失敗しました')
+    }
   }
 
   return (
@@ -70,20 +96,55 @@ export default function EditProfileModal({ open, user, loading, onClose, onSubmi
       </DialogTitle>
 
       <DialogContent sx={{ pt: 1 }}>
-        {/* アバター（表示のみ、アップロードは Phase5） */}
+        {submitError && (
+          <Alert severity="error" onClose={() => setSubmitError(null)} sx={{ mb: 2 }}>
+            {submitError}
+          </Alert>
+        )}
         <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-          <Avatar
-            src={user.avatarUrl ?? undefined}
-            alt={user.displayName}
-            sx={{
-              width: 72,
-              height: 72,
-              bgcolor: avatarColor(user.displayName),
-              fontSize: 28,
-            }}
-          >
-            {user.displayName[0]}
-          </Avatar>
+          <Box sx={{ position: 'relative', width: 72, height: 72 }}>
+            <Avatar
+              src={avatarPreview ?? user.avatarUrl ?? undefined}
+              alt={user.displayName}
+              sx={{
+                width: 72,
+                height: 72,
+                bgcolor: avatarColor(user.displayName),
+                fontSize: 28,
+              }}
+            >
+              {user.displayName[0]}
+            </Avatar>
+            {/* カメラアイコンオーバーレイ */}
+            <Box
+              sx={{
+                position: 'absolute',
+                inset: 0,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                bgcolor: 'rgba(0,0,0,0.45)',
+                borderRadius: '50%',
+                pointerEvents: 'none',
+              }}
+            >
+              <CameraAltIcon sx={{ color: '#fff', fontSize: 24 }} />
+            </Box>
+            {/* アバター全体を覆う透明な input — クリックで直接ファイル選択画面が開く */}
+            <input
+              type="file"
+              accept="image/jpeg,image/png"
+              onChange={handleAvatarChange}
+              style={{
+                position: 'absolute',
+                inset: 0,
+                width: '100%',
+                height: '100%',
+                opacity: 0,
+                cursor: 'pointer',
+              }}
+            />
+          </Box>
         </Box>
 
         <TextField

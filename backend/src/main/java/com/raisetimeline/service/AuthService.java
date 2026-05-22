@@ -23,6 +23,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final RefreshTokenService refreshTokenService;
+    private final S3Service s3Service;
 
     @Transactional
     public AuthResponse register(RegisterRequest req) {
@@ -57,7 +58,11 @@ public class AuthService {
         RefreshToken old = refreshTokenService.validate(refreshTokenValue);
         RefreshToken newToken = refreshTokenService.rotate(old);
         String accessToken = jwtUtil.generateToken(old.getUser().getEmail());
-        return new AuthResponse(accessToken, newToken.getToken(), new UserResponse(old.getUser()));
+        User refreshUser = old.getUser();
+        String refreshAvatarUrl = refreshUser.getAvatarKey() != null
+                ? s3Service.generatePresignedUrl(refreshUser.getAvatarKey())
+                : null;
+        return new AuthResponse(accessToken, newToken.getToken(), new UserResponse(refreshUser, refreshAvatarUrl));
     }
 
     @Transactional
@@ -69,6 +74,9 @@ public class AuthService {
     private AuthResponse buildAuthResponse(User user) {
         String accessToken = jwtUtil.generateToken(user.getEmail());
         RefreshToken refreshToken = refreshTokenService.create(user);
-        return new AuthResponse(accessToken, refreshToken.getToken(), new UserResponse(user));
+        String avatarUrl = user.getAvatarKey() != null
+                ? s3Service.generatePresignedUrl(user.getAvatarKey())
+                : null;
+        return new AuthResponse(accessToken, refreshToken.getToken(), new UserResponse(user, avatarUrl));
     }
 }

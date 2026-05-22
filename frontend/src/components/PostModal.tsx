@@ -43,6 +43,16 @@ export default function PostModal({
   // useRef で objectURL リストを追跡（空依存配列のクリーンアップでも最新値を参照できる）
   const objectUrlsRef = useRef<string[]>([])
 
+  // モーダルが開くたびに入力内容・画像をリセット
+  useEffect(() => {
+    if (open) {
+      setText(initialContent)
+      objectUrlsRef.current.forEach(url => URL.revokeObjectURL(url))
+      objectUrlsRef.current = []
+      setPreviews([])
+    }
+  }, [open]) // eslint-disable-line react-hooks/exhaustive-deps
+
   // アンマウント時に残っている objectURL を全解放
   // ref オブジェクト自体（安定した参照）をキャプチャし、cleanup で .current を参照する
   useEffect(() => {

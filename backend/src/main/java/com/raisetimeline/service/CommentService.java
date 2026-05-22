@@ -22,12 +22,13 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
     private final UserService userService;
+    private final S3Service s3Service;
 
     @Transactional(readOnly = true)
     public List<CommentResponse> getComments(Long postId) {
         findPost(postId);
         return commentRepository.findByPostIdOrderByCreatedAtAsc(postId).stream()
-                .map(CommentResponse::new)
+                .map(c -> toResponse(c))
                 .toList();
     }
 
@@ -40,7 +41,7 @@ public class CommentService {
                 .user(user)
                 .content(req.getContent())
                 .build();
-        return new CommentResponse(commentRepository.save(comment));
+        return toResponse(commentRepository.save(comment));
     }
 
     @Transactional
@@ -54,6 +55,13 @@ public class CommentService {
             throw new ForbiddenException("このコメントを削除する権限がありません");
         }
         commentRepository.delete(comment);
+    }
+
+    private CommentResponse toResponse(Comment comment) {
+        String userAvatarUrl = comment.getUser().getAvatarKey() != null
+                ? s3Service.generatePresignedUrl(comment.getUser().getAvatarKey())
+                : null;
+        return new CommentResponse(comment, userAvatarUrl);
     }
 
     private Post findPost(Long postId) {

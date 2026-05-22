@@ -19,10 +19,10 @@ public class PostResponse {
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
 
-    public PostResponse(Post post, boolean likedByCurrentUser, List<String> imageUrls) {
+    public PostResponse(Post post, boolean likedByCurrentUser, List<String> imageUrls, String userAvatarUrl) {
         this.id = post.getId();
         this.content = post.getContent();
-        this.user = new UserResponse(post.getUser());
+        this.user = new UserResponse(post.getUser(), userAvatarUrl);
         this.imageUrls = imageUrls != null ? imageUrls : List.of();
         this.likeCount = post.getLikeCount();
         this.commentCount = post.getCommentCount();

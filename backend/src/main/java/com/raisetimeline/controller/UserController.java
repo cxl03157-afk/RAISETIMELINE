@@ -10,9 +10,11 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -37,6 +39,13 @@ public class UserController {
             @AuthenticationPrincipal UserDetails principal,
             @Valid @RequestBody UpdateProfileRequest req) {
         return userService.updateProfile(principal.getUsername(), req);
+    }
+
+    @PutMapping(value = "/me/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public UserResponse uploadAvatar(
+            @AuthenticationPrincipal UserDetails principal,
+            @RequestParam MultipartFile avatar) {
+        return userService.uploadAvatar(principal.getUsername(), avatar);
     }
 
     @GetMapping("/search")

@@ -34,8 +34,8 @@ public class User {
     @Column(name = "password_hash", nullable = false)
     private String passwordHash;
 
-    @Column(name = "avatar_url", length = 500)
-    private String avatarUrl;
+    @Column(name = "avatar_key", length = 500)
+    private String avatarKey;
 
     @Column(columnDefinition = "TEXT")
     private String bio;
