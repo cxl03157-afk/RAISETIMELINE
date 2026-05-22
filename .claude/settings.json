@@ -7,7 +7,13 @@
       "Bash(git -C * diff *)",
       "Bash(git -C * log *)",
       "Bash(git -C * remote *)",
-      "Bash(git remote *)"
+      "Bash(git remote *)",
+      "Bash(echo \"backend PID: $!\")",
+      "Bash(npm run *)",
+      "Bash(echo \"frontend PID: $!\")",
+      "Bash(curl -s http://localhost:8080/actuator/health)",
+      "Bash(python3 -c ' *)",
+      "mcp__playwright__browser_close"
     ]
   }
 }

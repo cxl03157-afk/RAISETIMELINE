@@ -63,3 +63,10 @@ export async function getUserPosts(username: string): Promise<PostResponse[]> {
   const res = await fetchWithAuth(`/api/users/${encodeURIComponent(username)}/posts`)
   return handleResponse<PostResponse[]>(res)
 }
+
+export async function uploadAvatar(file: File): Promise<UserResponse> {
+  const formData = new FormData()
+  formData.append('avatar', file)
+  const res = await fetchWithAuth('/api/users/me/avatar', { method: 'PUT', body: formData })
+  return handleResponse<UserResponse>(res)
+}

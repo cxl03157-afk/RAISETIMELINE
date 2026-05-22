@@ -12,7 +12,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 
 import { likePost, unlikePost } from '../api/likes'
 import { deletePost } from '../api/posts'
-import { getUserProfile, getUserPosts, updateProfile, followUser, unfollowUser } from '../api/users'
+import { getUserProfile, getUserPosts, updateProfile, uploadAvatar, followUser, unfollowUser } from '../api/users'
 import { getUser, updateStoredUser } from '../utils/storage'
 import type { UserResponse } from '../types/auth'
 import type { PostResponse } from '../types/post'
@@ -114,16 +114,23 @@ export default function ProfilePage() {
     }
   }
 
-  async function handleEditSubmit(displayName: string, bio: string) {
+  async function handleEditSubmit(displayName: string, bio: string, avatarFile: File | null) {
     setEditLoading(true)
     try {
+      if (avatarFile) {
+        const avatarUpdated = await uploadAvatar(avatarFile)
+        setProfile(prev => prev && { ...prev, ...avatarUpdated })
+        setPosts(prev => prev.map(p =>
+          p.user.id === currentUser!.id
+            ? { ...p, user: { ...p.user, avatarUrl: avatarUpdated.avatarUrl } }
+            : p
+        ))
+      }
       const updated = await updateProfile(displayName, bio)
       setProfile(prev => prev && { ...prev, ...updated })
       updateStoredUser(updated)
       setNavUser(updated)
       setEditModalOpen(false)
-    } catch (e) {
-      setError(e instanceof Error ? e.message : '更新に失敗しました')
     } finally {
       setEditLoading(false)
     }

@@ -131,7 +131,10 @@ public class PostService {
         List<String> imageUrls = post.getImages().stream()
                 .map(img -> s3Service.generatePresignedUrl(img.getImageKey()))
                 .toList();
-        return new PostResponse(post, likedByCurrentUser, imageUrls);
+        String userAvatarUrl = post.getUser().getAvatarKey() != null
+                ? s3Service.generatePresignedUrl(post.getUser().getAvatarKey())
+                : null;
+        return new PostResponse(post, likedByCurrentUser, imageUrls, userAvatarUrl);
     }
 
     private void validateImages(List<MultipartFile> images) {

@@ -339,6 +339,7 @@ export default function TimelinePage() {
 
       {/* 投稿 FAB */}
       <Fab
+        variant="extended"
         onClick={() => { setEditingPost(null); setPostModalOpen(true) }}
         sx={{
           position: 'fixed',
@@ -348,9 +349,14 @@ export default function TimelinePage() {
           color: '#fff',
           '&:hover': { bgcolor: '#1a8cd8' },
           boxShadow: '0 4px 14px rgba(29,155,240,0.45)',
+          fontWeight: 700,
+          fontSize: 15,
+          px: 3,
+          gap: 1,
         }}
       >
         <AddIcon />
+        投稿
       </Fab>
 
       {/* 投稿作成・編集モーダル（key でリマウントして initialContent をリセット） */}
