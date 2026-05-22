@@ -22,3 +22,9 @@ app:
     expiration-ms: 900000    # 15 minutes
   refresh-token:
     expiration-days: 7
+
+aws:
+  s3:
+    bucket: ${AWS_S3_BUCKET:raisetimeline-images-865091756032}
+    region: ap-northeast-1
+    presigned-url-expiry-minutes: 60

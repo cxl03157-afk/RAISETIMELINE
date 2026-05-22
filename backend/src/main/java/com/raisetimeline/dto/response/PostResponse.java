@@ -19,18 +19,11 @@ public class PostResponse {
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
 
-    // 変異操作用（create: 未いいね確定）
-    public PostResponse(Post post) {
-        this(post, false);
-    }
-
-    // 読み取り用（timeline / getPost / update）
-    public PostResponse(Post post, boolean likedByCurrentUser) {
+    public PostResponse(Post post, boolean likedByCurrentUser, List<String> imageUrls) {
         this.id = post.getId();
         this.content = post.getContent();
         this.user = new UserResponse(post.getUser());
-        this.imageUrls = post.getImages() == null ? List.of()
-                : post.getImages().stream().map(img -> img.getImageUrl()).toList();
+        this.imageUrls = imageUrls != null ? imageUrls : List.of();
         this.likeCount = post.getLikeCount();
         this.commentCount = post.getCommentCount();
         this.likedByCurrentUser = likedByCurrentUser;

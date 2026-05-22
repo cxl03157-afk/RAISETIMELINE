@@ -164,14 +164,14 @@ export default function TimelinePage() {
   }
 
   // --- 投稿作成・編集 ---
-  async function handleSubmitPost(content: string) {
+  async function handleSubmitPost(content: string, files: File[]) {
     setSubmitLoading(true)
     try {
       if (editingPost) {
         const updated = await updatePost(editingPost.id, content)
         setPosts((prev) => prev.map((p) => (p.id === updated.id ? updated : p)))
       } else {
-        const created = await createPost(content)
+        const created = await createPost(content, files)
         setPosts((prev) => [created, ...prev])
         // 自分の投稿後にバナーが出ないようbaselineを更新
         baselineIdRef.current = created.id

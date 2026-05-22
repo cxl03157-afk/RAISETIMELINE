@@ -24,11 +24,14 @@ export async function fetchTimeline(
   return handleResponse<PageResponse<PostResponse>>(res)
 }
 
-export async function createPost(content: string): Promise<PostResponse> {
+export async function createPost(content: string, images: File[] = []): Promise<PostResponse> {
+  const formData = new FormData()
+  formData.append('content', content.trim())
+  images.forEach(img => formData.append('images', img))
+  // Content-Type は指定しない → ブラウザが multipart/form-data + boundary を自動設定
   const res = await fetchWithAuth('/api/posts', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ content }),
+    body: formData,
   })
   return handleResponse<PostResponse>(res)
 }
