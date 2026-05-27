@@ -1,4 +1,6 @@
 spring:
+  application:
+    name: raisetimeline
   servlet:
     multipart:
       max-file-size: 10MB
@@ -32,6 +34,15 @@ aws:
     bucket: ${AWS_S3_BUCKET:raisetimeline-images-865091756032}
     region: ap-northeast-1
     presigned-url-expiry-minutes: 60
+
+logging:
+  level:
+    root: INFO
+    com.raisetimeline: INFO
+    org.hibernate.SQL: WARN
+    org.hibernate.orm.jdbc.bind: WARN
+    org.springframework.security: WARN
+    software.amazon.awssdk: WARN
 
 springdoc:
   api-docs:

@@ -11,6 +11,7 @@ import com.raisetimeline.exception.ResourceNotFoundException;
 import com.raisetimeline.repository.LikeRepository;
 import com.raisetimeline.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PostService {
@@ -105,6 +107,7 @@ public class PostService {
             throw e;
         }
 
+        log.info("Post created: postId={} username={}", post.getId(), user.getUsername());
         return toResponse(post, false);
     }
 
@@ -125,6 +128,7 @@ public class PostService {
         // S3 連動削除（失敗はログのみ・DB 削除は継続）
         post.getImages().forEach(img -> s3Service.delete(img.getImageKey()));
         postRepository.delete(post);
+        log.info("Post deleted: postId={} username={}", postId, email);
     }
 
     private PostResponse toResponse(Post post, boolean likedByCurrentUser) {
