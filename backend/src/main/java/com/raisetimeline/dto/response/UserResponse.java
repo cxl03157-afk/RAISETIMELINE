@@ -1,21 +1,40 @@
 package com.raisetimeline.dto.response;
 
 import com.raisetimeline.entity.User;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
 
 @Getter
+@Schema(description = "ユーザー情報レスポンス")
 public class UserResponse {
+    @Schema(description = "ユーザーID", example = "1")
     private final Long id;
+
+    @Schema(description = "ユーザー名（ユニーク）", example = "taro_suzuki")
     private final String username;
+
+    @Schema(description = "表示名", example = "鈴木 太郎")
     private final String displayName;
+
+    @Schema(description = "アバター画像の presigned URL")
     private final String avatarUrl;
+
+    @Schema(description = "自己紹介文", example = "東京在住のエンジニアです")
     private final String bio;
+
+    @Schema(description = "フォロー中のユーザー数", example = "120")
     private final long followingCount;
+
+    @Schema(description = "フォロワー数", example = "340")
     private final long followersCount;
+
+    @Schema(description = "自分がフォローしているか", example = "false")
     // Lombok generates isFollowedByMe() → Jackson serializes as "followedByMe"
     private final boolean followedByMe;
+
+    @Schema(description = "アカウント作成日時")
     private final LocalDateTime createdAt;
 
     // 認証レスポンス用（ログイン・登録・リフレッシュ時）— フォロー情報は 0/false

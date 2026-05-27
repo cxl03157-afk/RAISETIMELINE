@@ -46,6 +46,9 @@ dependencies {
     implementation platform('software.amazon.awssdk:bom:2.31.17')
     implementation 'software.amazon.awssdk:s3'
 
+    // OpenAPI (Swagger UI) — Spring Boot 4.x / Spring Framework 7 対応版
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.3'
+
     // Lombok
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
