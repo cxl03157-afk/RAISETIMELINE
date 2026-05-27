@@ -32,3 +32,12 @@ aws:
     bucket: ${AWS_S3_BUCKET:raisetimeline-images-865091756032}
     region: ap-northeast-1
     presigned-url-expiry-minutes: 60
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+    tags-sorter: alpha
+    disable-swagger-default-url: true
