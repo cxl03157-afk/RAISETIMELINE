@@ -49,6 +49,9 @@ dependencies {
     // OpenAPI (Swagger UI) — Spring Boot 4.x / Spring Framework 7 対応版
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.3'
 
+    // 構造化ログ（JSON 出力）
+    implementation 'net.logstash.logback:logstash-logback-encoder:8.1'
+
     // Lombok
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
