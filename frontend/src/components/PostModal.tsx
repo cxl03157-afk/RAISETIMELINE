@@ -44,8 +44,10 @@ export default function PostModal({
   const objectUrlsRef = useRef<string[]>([])
 
   // モーダルが開くたびに入力内容・画像をリセット
+  // （親が key={editingPost?.id ?? 'new'} で管理する意図的なリセットパターン）
   useEffect(() => {
     if (open) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setText(initialContent)
       objectUrlsRef.current.forEach(url => URL.revokeObjectURL(url))
       objectUrlsRef.current = []
