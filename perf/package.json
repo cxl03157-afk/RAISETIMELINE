@@ -1,0 +1,16 @@
+{
+  "name": "raisetimeline-perf",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "perf:auth":     "bash run.sh 01-auth",
+    "perf:timeline": "bash run.sh 02-timeline",
+    "perf:write":    "bash run.sh 03-post-write",
+    "perf:full":     "bash run.sh 04-full-journey",
+    "perf:browser":  "bash run-browser.sh",
+    "perf:cleanup":  "node scripts/cleanup.js"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.49.0"
+  }
+}
