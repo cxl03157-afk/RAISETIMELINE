@@ -1,7 +1,8 @@
 import { test, expect } from '@playwright/test'
 
 // テスト実行ごとにユニークなIDでデータ衝突を防ぐ
-const uid = Date.now()
+// Date.now() は13桁でユーザー名20文字制限を超えるため末尾6桁を使用
+const uid = Date.now() % 1000000
 
 test.describe('認証フロー', () => {
   // ─── 新規登録 ────────────────────────────────────────────────

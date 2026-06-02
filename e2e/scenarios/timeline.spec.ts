@@ -1,6 +1,7 @@
 import { test, expect, type Page } from '@playwright/test'
 
-const uid = Date.now() + 2
+// Date.now() は13桁でユーザー名20文字制限を超えるため末尾6桁を使用
+const uid = (Date.now() + 2) % 1000000
 const username = `e2e_tl${uid}`
 const email = `e2e_tl${uid}@example.com`
 const password = 'Password123'

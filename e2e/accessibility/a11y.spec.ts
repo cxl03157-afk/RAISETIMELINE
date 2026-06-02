@@ -1,7 +1,8 @@
 import { test, expect } from '@playwright/test'
 import AxeBuilder from '@axe-core/playwright'
 
-const uid = Date.now() + 4
+// Date.now() は13桁でユーザー名20文字制限を超えるため末尾6桁を使用
+const uid = (Date.now() + 4) % 1000000
 const email = `e2e_a11y${uid}@example.com`
 const password = 'Password123'
 
