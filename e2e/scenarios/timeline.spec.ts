@@ -15,6 +15,9 @@ async function login(page: Page) {
   await page.waitForURL('/home', { timeout: 10000 })
 }
 
+// FAB の exact セレクタ（aria-label="投稿メニュー" との混同を避けるため exact: true）
+const FAB = { name: '投稿', exact: true } as const
+
 test.describe('タイムライン操作', () => {
   // テストスイート全体で 1 回だけユーザーを作成
   test.beforeAll(async ({ browser }) => {
@@ -58,17 +61,17 @@ test.describe('タイムライン操作', () => {
   // ─── 投稿作成 ─────────────────────────────────────────────
   test.describe('投稿作成', () => {
     test('FAB をクリックするとモーダルが開く', async ({ page }) => {
-      await page.getByRole('button', { name: '投稿' }).click()
+      await page.getByRole('button', FAB).click()
       await expect(page.getByText('新しい投稿')).toBeVisible()
     })
 
     test('テキスト未入力では「投稿する」ボタンが無効', async ({ page }) => {
-      await page.getByRole('button', { name: '投稿' }).click()
+      await page.getByRole('button', FAB).click()
       await expect(page.getByRole('button', { name: '投稿する' })).toBeDisabled()
     })
 
     test('テキスト入力後に「投稿する」が有効になる', async ({ page }) => {
-      await page.getByRole('button', { name: '投稿' }).click()
+      await page.getByRole('button', FAB).click()
       await page.getByPlaceholder('いまどうしてる？').fill('テスト投稿です')
       await expect(page.getByRole('button', { name: '投稿する' })).toBeEnabled()
     })
@@ -76,7 +79,7 @@ test.describe('タイムライン操作', () => {
     test('投稿するとタイムラインに表示される', async ({ page }) => {
       const content = `E2E テスト投稿 ${uid} - ${new Date().toISOString()}`
 
-      await page.getByRole('button', { name: '投稿' }).click()
+      await page.getByRole('button', FAB).click()
       await page.getByPlaceholder('いまどうしてる？').fill(content)
       await page.getByRole('button', { name: '投稿する' }).click()
 
@@ -88,19 +91,21 @@ test.describe('タイムライン操作', () => {
     })
 
     test('280 文字超では「投稿する」ボタンが無効', async ({ page }) => {
-      await page.getByRole('button', { name: '投稿' }).click()
+      await page.getByRole('button', FAB).click()
       await page.getByPlaceholder('いまどうしてる？').fill('あ'.repeat(281))
       await expect(page.getByRole('button', { name: '投稿する' })).toBeDisabled()
     })
 
     test('モーダルを閉じるとテキストがリセットされる', async ({ page }) => {
-      await page.getByRole('button', { name: '投稿' }).click()
+      await page.getByRole('button', FAB).click()
       await page.getByPlaceholder('いまどうしてる？').fill('消えるはずのテキスト')
-      // × ボタンで閉じる
-      await page.getByRole('button').filter({ hasText: '' }).first().click()
+      // aria-label="閉じる" ボタンでモーダルを閉じる
+      await page.getByRole('button', { name: '閉じる' }).click()
+      // モーダルが閉じるまで待機
+      await expect(page.getByText('新しい投稿')).not.toBeVisible({ timeout: 5000 })
 
       // 再度モーダルを開くとテキストが空
-      await page.getByRole('button', { name: '投稿' }).click()
+      await page.getByRole('button', FAB).click()
       await expect(page.getByPlaceholder('いまどうしてる？')).toHaveValue('')
     })
   })

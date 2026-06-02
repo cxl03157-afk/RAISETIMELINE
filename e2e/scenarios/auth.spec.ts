@@ -109,7 +109,7 @@ test.describe('認証フロー', () => {
 
     test('正常ログイン → /home にリダイレクト', async ({ page }) => {
       await page.goto('/login')
-      await expect(page.getByText('ログイン')).toBeVisible()
+      await expect(page.getByRole('heading', { name: 'ログイン' })).toBeVisible()
 
       await page.getByLabel('メールアドレス').fill(loginEmail)
       await page.getByLabel('パスワード').fill(loginPassword)
