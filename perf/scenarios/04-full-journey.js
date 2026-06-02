@@ -6,7 +6,7 @@
 import http from 'k6/http'
 import { check, sleep } from 'k6'
 import { thresholds, BASE_URL, PERF_USER_COUNT, PERF_PASSWORD } from '../lib/config.js'
-import { registerUser, login, authHeaders } from '../lib/auth.js'
+import { registerUser, login, authHeaders, postMultipart } from '../lib/auth.js'
 
 export const options = {
   stages: [
@@ -46,12 +46,10 @@ export default function (data) {
   check(timelineRes, { 'timeline 200': (r) => r.status === 200 })
   sleep(1)
 
-  // Step 3: 投稿作成
-  const postRes = http.post(
-    `${BASE_URL}/api/posts`,
-    JSON.stringify({ content: `perf full journey post - VU${__VU} ${new Date().toISOString()}` }),
-    authHeaders(token)
-  )
+  // Step 3: 投稿作成（filename なしのマルチパートで POST）
+  const postContent = `perf full journey post - VU${__VU} ${new Date().toISOString()}`
+  const { body: postBody, params: postParams } = postMultipart(postContent, token)
+  const postRes = http.post(`${BASE_URL}/api/posts`, postBody, postParams)
   check(postRes, { 'post 201': (r) => r.status === 201 })
   const postId = postRes.json('id')
   sleep(0.5)
@@ -77,8 +75,6 @@ export default function (data) {
   check(refreshRes, { 'refresh timeline 200': (r) => r.status === 200 })
   sleep(1)
 
-  // 作成した投稿を削除（teardown ではなくイテレーション内で対処）
-  if (postId) {
-    http.del(`${BASE_URL}/api/posts/${postId}`, null, authHeaders(token))
-  }
+  // 投稿はイテレーション内で削除せず cleanup.js に委ねる
+  // （即削除すると他 VU のいいねが 404 になりエラー率が上がるため）
 }

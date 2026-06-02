@@ -7,7 +7,7 @@
 import http from 'k6/http'
 import { check, sleep } from 'k6'
 import { thresholds, BASE_URL, PERF_USER_COUNT, PERF_PASSWORD } from '../lib/config.js'
-import { registerUser, authHeaders } from '../lib/auth.js'
+import { registerUser, postMultipart } from '../lib/auth.js'
 
 export const options = {
   stages: [
@@ -34,11 +34,9 @@ export default function (data) {
   const user = data.users[(__VU - 1) % data.users.length]
   const content = `perf write test - VU${__VU} iter${__ITER} ${new Date().toISOString()}`
 
-  const res = http.post(
-    `${BASE_URL}/api/posts`,
-    JSON.stringify({ content }),
-    authHeaders(user.token)
-  )
+  // filename なしのマルチパートで POST（http.file() は filename 付きで Spring が 500 を返す）
+  const { body, params } = postMultipart(content, user.token)
+  const res = http.post(`${BASE_URL}/api/posts`, body, params)
 
   check(res, {
     'status 201': (r) => r.status === 201,

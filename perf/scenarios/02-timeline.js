@@ -6,7 +6,7 @@
 import http from 'k6/http'
 import { check, sleep } from 'k6'
 import { thresholds, BASE_URL, PERF_USER_COUNT, PERF_PASSWORD } from '../lib/config.js'
-import { registerUser, authHeaders } from '../lib/auth.js'
+import { registerUser, authHeaders, postMultipart } from '../lib/auth.js'
 
 const SEED_POST_COUNT = 100 // タイムラインに実態に近いデータを用意
 
@@ -30,11 +30,8 @@ export function setup() {
   // 最初のユーザーで投稿シードを作成（タイムラインに実態に近いデータを用意）
   const seedUser = users[0]
   for (let i = 0; i < SEED_POST_COUNT; i++) {
-    http.post(
-      `${BASE_URL}/api/posts`,
-      JSON.stringify({ content: `perf timeline seed post #${i + 1}` }),
-      authHeaders(seedUser.token)
-    )
+    const { body, params } = postMultipart(`perf timeline seed post #${i + 1}`, seedUser.token)
+    http.post(`${BASE_URL}/api/posts`, body, params)
   }
 
   return { users }

@@ -45,3 +45,22 @@ export function authHeaders(token) {
     },
   }
 }
+
+/**
+ * POST /api/posts 用のマルチパートボディを返す。
+ * http.file() は filename を付けて Spring が 500 を返すため、
+ * filename なしのマルチパートを手動で構築する。
+ */
+export function postMultipart(content, token) {
+  const boundary = 'k6boundary'
+  const body = `--${boundary}\r\nContent-Disposition: form-data; name="content"\r\n\r\n${content}\r\n--${boundary}--\r\n`
+  return {
+    body,
+    params: {
+      headers: {
+        'Content-Type': `multipart/form-data; boundary=${boundary}`,
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  }
+}

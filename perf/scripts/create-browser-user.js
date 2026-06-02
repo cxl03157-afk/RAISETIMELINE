@@ -17,6 +17,24 @@ async function apiPost(path, body, token) {
   return res.json()
 }
 
+// POST /api/posts は multipart/form-data が必要（@RequestPart）
+async function apiPostMultipart(path, fields, token) {
+  const formData = new FormData()
+  for (const [key, value] of Object.entries(fields)) {
+    formData.append(key, value)
+  }
+  const res = await fetch(`${BASE_URL}${path}`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${token}` },
+    body: formData,
+  })
+  if (!res.ok) {
+    const text = await res.text()
+    throw new Error(`${path} → ${res.status}: ${text}`)
+  }
+  return res.json()
+}
+
 async function main() {
   // ユーザー登録（既存の場合はログインにフォールバック）
   let token
@@ -40,7 +58,7 @@ async function main() {
 
   // タイムライン計測に実態に近いデータを用意するため POST_COUNT 件投稿
   for (let i = 0; i < POST_COUNT; i++) {
-    await apiPost('/api/posts', {
+    await apiPostMultipart('/api/posts', {
       content: `perf browser seed post #${String(i + 1).padStart(2, '0')} - ${new Date().toISOString()}`,
     }, token)
   }
