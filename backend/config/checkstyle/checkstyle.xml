@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<!DOCTYPE module PUBLIC
+    "-//Checkstyle//DTD Checkstyle Configuration 1.3//EN"
+    "https://checkstyle.org/dtds/configuration_1_3.dtd">
+
+<!--
+  最小限の Checkstyle 設定（初期導入向け）
+  段階的に厳しくすることを想定したベースライン。
+
+  現在チェックしていない項目（将来追加候補）:
+  - AvoidStarImport: 既存コードが jakarta.persistence.* / lombok.* を使用しているため除外
+  - LineLength: 初期は未適用
+  - JavadocMethod: Javadoc は任意
+-->
+<module name="Checker">
+    <property name="severity" value="error"/>
+    <property name="fileExtensions" value="java"/>
+
+    <!-- タブ文字禁止（スペースのみ） -->
+    <module name="FileTabCharacter"/>
+
+    <module name="TreeWalker">
+        <!-- 空の catch ブロック禁止（expected / ignore / ignored 変数名は許可） -->
+        <module name="EmptyCatchBlock">
+            <property name="exceptionVariableName" value="expected|ignore|ignored"/>
+        </module>
+
+        <!-- long リテラルは小文字 l ではなく大文字 L を使う（例: 1L） -->
+        <module name="UpperEll"/>
+
+        <!-- 配列型は C スタイル禁止（String args[] → String[] args） -->
+        <module name="ArrayTypeStyle"/>
+    </module>
+</module>
