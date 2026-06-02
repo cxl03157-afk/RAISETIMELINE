@@ -118,7 +118,7 @@ export default function PostModal({
         }}
       >
         {mode === 'create' ? '新しい投稿' : '投稿を編集'}
-        <IconButton onClick={handleClose} disabled={loading} size="small">
+        <IconButton onClick={handleClose} disabled={loading} size="small" aria-label="閉じる">
           <CloseIcon />
         </IconButton>
       </DialogTitle>
@@ -164,6 +164,7 @@ export default function PostModal({
                 />
                 <IconButton
                   size="small"
+                  aria-label="画像を削除"
                   onClick={() => removeImage(idx)}
                   disabled={loading}
                   sx={{
@@ -206,6 +207,7 @@ export default function PostModal({
                 />
                 <IconButton
                   size="small"
+                  aria-label="画像を追加"
                   disabled={loading || previews.length >= MAX_IMAGES}
                   onClick={() => fileInputRef.current?.click()}
                   sx={{ color: '#1D9BF0' }}

@@ -71,7 +71,7 @@ export default function EditProfileModal({ open, user, loading, onClose, onSubmi
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
       <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1, pb: 1 }}>
-        <IconButton onClick={onClose} size="small" sx={{ color: '#536471' }}>
+        <IconButton onClick={onClose} size="small" aria-label="閉じる" sx={{ color: '#536471' }}>
           <CloseIcon fontSize="small" />
         </IconButton>
         <Typography sx={{ fontWeight: 700, fontSize: 18, flex: 1 }}>プロフィールを編集</Typography>
