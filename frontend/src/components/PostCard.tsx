@@ -123,6 +123,7 @@ export default function PostCard({
             <Box sx={{ ml: 'auto' }}>
               <IconButton
                 size="small"
+                aria-label="投稿メニュー"
                 onClick={(e) => setAnchorEl(e.currentTarget)}
                 sx={{ color: '#536471', p: '4px' }}
               >

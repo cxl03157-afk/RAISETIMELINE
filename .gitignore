@@ -20,7 +20,6 @@
 # Backend
 backend/build/
 backend/.gradle/
-backend/gradle/wrapper/gradle-wrapper.jar
 
 # Playwright MCP
 .mcp.json
@@ -29,3 +28,9 @@ backend/gradle/wrapper/gradle-wrapper.jar
 # Playwright スクリーンショット
 *.png
 *.jpeg
+
+# E2E
+e2e/node_modules/
+e2e/playwright-report/
+e2e/test-results/
+e2e/.playwright-cache/

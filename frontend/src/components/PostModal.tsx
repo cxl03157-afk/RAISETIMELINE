@@ -44,8 +44,10 @@ export default function PostModal({
   const objectUrlsRef = useRef<string[]>([])
 
   // モーダルが開くたびに入力内容・画像をリセット
+  // （親が key={editingPost?.id ?? 'new'} で管理する意図的なリセットパターン）
   useEffect(() => {
     if (open) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setText(initialContent)
       objectUrlsRef.current.forEach(url => URL.revokeObjectURL(url))
       objectUrlsRef.current = []
@@ -116,7 +118,7 @@ export default function PostModal({
         }}
       >
         {mode === 'create' ? '新しい投稿' : '投稿を編集'}
-        <IconButton onClick={handleClose} disabled={loading} size="small">
+        <IconButton onClick={handleClose} disabled={loading} size="small" aria-label="閉じる">
           <CloseIcon />
         </IconButton>
       </DialogTitle>
@@ -162,6 +164,7 @@ export default function PostModal({
                 />
                 <IconButton
                   size="small"
+                  aria-label="画像を削除"
                   onClick={() => removeImage(idx)}
                   disabled={loading}
                   sx={{
@@ -204,6 +207,7 @@ export default function PostModal({
                 />
                 <IconButton
                   size="small"
+                  aria-label="画像を追加"
                   disabled={loading || previews.length >= MAX_IMAGES}
                   onClick={() => fileInputRef.current?.click()}
                   sx={{ color: '#1D9BF0' }}

@@ -292,7 +292,7 @@ export default function TimelinePage() {
         {/* 初回ローディング */}
         {initialLoading && (
           <Box sx={{ display: 'flex', justifyContent: 'center', py: 6 }}>
-            <CircularProgress sx={{ color: '#1D9BF0' }} />
+            <CircularProgress sx={{ color: '#1D9BF0' }} aria-label="読み込み中" />
           </Box>
         )}
 
@@ -320,7 +320,7 @@ export default function TimelinePage() {
             {/* 追加ロード中スピナー */}
             {loading && (
               <Box sx={{ display: 'flex', justifyContent: 'center', py: 3 }}>
-                <CircularProgress size={24} sx={{ color: '#1D9BF0' }} />
+                <CircularProgress size={24} sx={{ color: '#1D9BF0' }} aria-label="読み込み中" />
               </Box>
             )}
 

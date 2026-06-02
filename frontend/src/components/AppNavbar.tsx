@@ -55,11 +55,12 @@ export default function AppNavbar({ user, onLogout }: AppNavbarProps) {
           <IconButton
             onClick={() => navigate('/search')}
             size="small"
+            aria-label="検索"
             sx={{ color: '#536471' }}
           >
             <SearchIcon fontSize="small" />
           </IconButton>
-          <IconButton onClick={(e) => setAnchorEl(e.currentTarget)} size="small">
+          <IconButton onClick={(e) => setAnchorEl(e.currentTarget)} size="small" aria-label="アカウントメニュー">
             <Avatar
               src={user.avatarUrl ?? undefined}
               alt={user.displayName}
