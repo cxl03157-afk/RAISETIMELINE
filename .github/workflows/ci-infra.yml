@@ -47,6 +47,7 @@ jobs:
           scan-ref: infra/terraform
           exit-code: '1'
           severity: HIGH,CRITICAL
+          trivyignores: infra/terraform/.trivyignore
 
   plan:
     name: Terraform Plan
