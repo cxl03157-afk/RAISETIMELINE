@@ -10,7 +10,8 @@ resource "aws_cloudfront_function" "ip_allowlist" {
   runtime = "cloudfront-js-2.0"
   publish = true
   code = templatefile("${path.module}/cf_functions/ip_allowlist.js.tftpl", {
-    allowed_ip = var.allowed_ip
+    allowed_ipv4 = var.allowed_ipv4
+    allowed_ipv6 = var.allowed_ipv6
   })
 }
 

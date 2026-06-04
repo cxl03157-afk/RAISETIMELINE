@@ -1,0 +1,65 @@
+name: CD - Frontend
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/cd-frontend.yml'
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    name: Build & Deploy to S3/CloudFront
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install Dependencies
+        run: npm ci
+        working-directory: frontend
+
+      - name: Build
+        run: npm run build
+        working-directory: frontend
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_GITHUB_ACTIONS_ROLE_ARN }}
+          aws-region: ap-northeast-1
+
+      - name: Deploy to S3
+        env:
+          FRONTEND_S3_BUCKET: ${{ secrets.FRONTEND_S3_BUCKET }}
+        run: |
+          # assets/: Vite hash 付き immutable ファイル（不要ファイルを --delete で削除）
+          aws s3 sync frontend/dist/assets/ s3://${FRONTEND_S3_BUCKET}/assets/ \
+            --delete \
+            --cache-control "public, max-age=31536000, immutable"
+
+          # index.html: 常に最新を取得
+          aws s3 cp frontend/dist/index.html s3://${FRONTEND_S3_BUCKET}/index.html \
+            --cache-control "no-cache, no-store, must-revalidate"
+
+          # その他ルートファイル（favicon 等）: --delete なし
+          aws s3 sync frontend/dist/ s3://${FRONTEND_S3_BUCKET}/ \
+            --exclude "assets/*" \
+            --exclude "index.html" \
+            --cache-control "public, max-age=86400"
+
+      - name: CloudFront Invalidation
+        env:
+          CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id $CLOUDFRONT_DISTRIBUTION_ID \
+            --paths "/index.html"
