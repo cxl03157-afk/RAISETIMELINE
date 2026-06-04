@@ -1,0 +1,17 @@
+# ALB はパブリックサブネットに配置するが、SG で CloudFront Managed Prefix List のみ許可
+AVD-AWS-0053
+
+# ALB リスナーは HTTP:80 のみ（CloudFront が HTTPS を終端するため意図的な設計）
+AVD-AWS-0054
+
+# CloudFront WAF は未使用（CloudFront Function による IP 制限で代替）
+AVD-AWS-0011
+
+# ECR タグは MUTABLE が必要（CD パイプラインが :latest タグを上書き更新するため）
+AVD-AWS-0031
+
+# S3 暗号化は SSE-S3（AES256）を使用（CMK は学習環境では不要）
+AVD-AWS-0132
+
+# SG の egress は全開放（ECS タスクが ECR/CloudWatch Logs/SSM/NAT に接続するため必要）
+AVD-AWS-0104

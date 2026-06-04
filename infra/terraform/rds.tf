@@ -20,6 +20,7 @@ resource "aws_db_instance" "postgres" {
 
   multi_az                = false
   publicly_accessible     = false
+  storage_encrypted       = true
   backup_retention_period = 0
   deletion_protection     = false
   skip_final_snapshot     = true
