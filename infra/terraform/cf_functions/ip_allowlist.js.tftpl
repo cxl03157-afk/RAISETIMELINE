@@ -1,0 +1,12 @@
+function handler(event) {
+  var clientIp = event.viewer.ip;
+  var allowedIp = "${allowed_ip}";
+  if (clientIp !== allowedIp) {
+    return {
+      statusCode: 403,
+      statusDescription: "Forbidden",
+      body: "Access denied"
+    };
+  }
+  return event.request;
+}
