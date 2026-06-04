@@ -44,6 +44,15 @@ logging:
     org.springframework.security: WARN
     software.amazon.awssdk: WARN
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: never
+
 springdoc:
   api-docs:
     path: /v3/api-docs
