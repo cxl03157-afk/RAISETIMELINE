@@ -4,7 +4,7 @@ data "aws_ec2_managed_prefix_list" "cloudfront" {
 
 resource "aws_security_group" "alb" {
   name        = "raisetimeline-alb"
-  description = "ALB: CloudFront からの HTTP のみ許可"
+  description = "ALB: Allow HTTP from CloudFront only"
   vpc_id      = aws_vpc.main.id
 
   ingress {
@@ -27,7 +27,7 @@ resource "aws_security_group" "alb" {
 
 resource "aws_security_group" "ecs" {
   name        = "raisetimeline-ecs"
-  description = "ECS: ALB からの 8080 のみ許可"
+  description = "ECS: Allow 8080 from ALB only"
   vpc_id      = aws_vpc.main.id
 
   ingress {
@@ -50,7 +50,7 @@ resource "aws_security_group" "ecs" {
 
 resource "aws_security_group" "rds" {
   name        = "raisetimeline-rds"
-  description = "RDS: ECS からの 5432 のみ許可"
+  description = "RDS: Allow 5432 from ECS only"
   vpc_id      = aws_vpc.main.id
 
   ingress {
