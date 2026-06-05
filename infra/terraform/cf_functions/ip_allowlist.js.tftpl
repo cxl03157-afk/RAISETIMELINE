@@ -1,0 +1,15 @@
+function handler(event) {
+  var clientIp = event.viewer.ip;
+  var allowedIpv4 = "${allowed_ipv4}";
+  var allowedIpv6 = "${allowed_ipv6}";
+  var allowed = clientIp === allowedIpv4 ||
+                (allowedIpv6 !== "" && clientIp === allowedIpv6);
+  if (!allowed) {
+    return {
+      statusCode: 403,
+      statusDescription: "Forbidden",
+      body: "Access denied"
+    };
+  }
+  return event.request;
+}
