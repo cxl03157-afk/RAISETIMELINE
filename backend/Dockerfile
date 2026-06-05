@@ -3,6 +3,7 @@ FROM amazoncorretto:25-al2023 AS builder
 WORKDIR /app
 COPY gradlew .
 COPY gradle/ gradle/
+RUN dnf install -y findutils && dnf clean all
 RUN chmod +x gradlew && ./gradlew --version
 COPY build.gradle settings.gradle ./
 COPY config/ config/
