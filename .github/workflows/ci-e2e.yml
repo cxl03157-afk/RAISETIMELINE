@@ -4,15 +4,15 @@ on:
   push:
     branches: [main]
     paths:
-      - 'frontend/**'
-      - 'backend/**'
+      - 'frontend/src/**'
+      - 'backend/src/**'
       - 'e2e/**'
       - '.github/workflows/ci-e2e.yml'
   pull_request:
     branches: [main]
     paths:
-      - 'frontend/**'
-      - 'backend/**'
+      - 'frontend/src/**'
+      - 'backend/src/**'
       - 'e2e/**'
       - '.github/workflows/ci-e2e.yml'
 

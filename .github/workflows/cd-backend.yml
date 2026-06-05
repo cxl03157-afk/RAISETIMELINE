@@ -62,4 +62,3 @@ jobs:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
           service: raisetimeline-backend
           cluster: raisetimeline
-          wait-for-service-stability: true
