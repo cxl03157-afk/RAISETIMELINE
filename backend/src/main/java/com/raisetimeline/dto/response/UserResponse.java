@@ -1,5 +1,6 @@
 package com.raisetimeline.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.raisetimeline.entity.User;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
@@ -35,6 +36,7 @@ public class UserResponse {
     private final boolean followedByMe;
 
     @Schema(description = "アカウント作成日時")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'", timezone = "UTC")
     private final LocalDateTime createdAt;
 
     // 認証レスポンス用（ログイン・登録・リフレッシュ時）— フォロー情報は 0/false
