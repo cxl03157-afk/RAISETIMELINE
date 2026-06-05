@@ -28,6 +28,7 @@ backend/.gradle/
 # Playwright スクリーンショット
 *.png
 *.jpeg
+!doc/screenshots/*.png
 
 # E2E
 e2e/node_modules/

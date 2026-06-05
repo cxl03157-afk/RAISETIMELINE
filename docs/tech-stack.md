@@ -8,9 +8,9 @@
 |---|---|---|
 | Node.js | 25.9.0 | JavaScript ランタイム |
 | React | 19 | UI フレームワーク |
-| TypeScript | 5.9 | 型安全な JavaScript |
-| Vite | 8 | ビルドツール・開発サーバー |
-| Material UI | 7 | UI コンポーネントライブラリ |
+| TypeScript | 6.0.2 | 型安全な JavaScript |
+| Vite | 8.0.12 | ビルドツール・開発サーバー |
+| Material UI | 9.0.1 | UI コンポーネントライブラリ |
 | fetch API | ブラウザ標準 | バックエンド API 通信 |
 
 ## バックエンド
@@ -39,14 +39,17 @@
 
 | 技術 | バージョン | 用途 |
 |---|---|---|
-| AWS S3 | — | 投稿画像・アバター画像の保存 |
-| AWS EC2 | — | アプリケーションサーバー |
-| AWS RDS (PostgreSQL) | — | マネージド DB |
-| AWS ALB | — | ロードバランサー（HTTP → EC2 ルーティング） |
-| Terraform | 1.15.2 | インフラ as Code（IaC） |
+| AWS ECS Fargate | — | バックエンドコンテナ実行環境 |
+| AWS ECR | — | Docker イメージレジストリ |
+| AWS CloudFront | — | CDN・フロントエンド配信・API プロキシ |
+| AWS S3 | — | 投稿画像・アバター画像の保存・フロントエンド静的ファイル配信 |
+| AWS RDS (PostgreSQL 17) | — | マネージド DB |
+| AWS ALB | — | ロードバランサー（CloudFront → ECS ルーティング） |
+| AWS SSM Parameter Store | — | DB 接続情報・JWT シークレット管理 |
+| AWS CloudWatch Logs | — | ECS コンテナログ収集 |
+| Terraform | >= 1.6 | インフラ as Code（IaC） |
 | AWS CLI | 2.34.45 | AWS 操作 CLI |
-| Amazon Linux 2023 | — | EC2 OS |
-| Nginx | 1.28 | リバースプロキシ（EC2 上） |
+| Docker（Amazon Corretto 25-al2023） | — | バックエンドコンテナイメージ |
 
 ## 開発ツール
 

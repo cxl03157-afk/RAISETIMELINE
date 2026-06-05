@@ -32,7 +32,7 @@ docker compose up -d
 
 # 2. バックエンド（Spring Boot） — port 8080
 cd backend
-JAVA_HOME=/opt/homebrew/opt/openjdk@21 ./gradlew bootRun
+JAVA_HOME=/Library/Java/JavaVirtualMachines/temurin-25.jdk/Contents/Home ./gradlew bootRun
 
 # 3. フロントエンド（Vite） — port 5173
 cd frontend

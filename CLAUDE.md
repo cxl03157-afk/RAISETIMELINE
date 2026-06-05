@@ -52,6 +52,13 @@ type: `feat` / `fix` / `docs` / `refactor` / `test` / `chore`
 3. それでも解消しない場合: `--deployment-configuration minimumHealthyPercent=0,maximumPercent=200` を追加
 4. 復旧後は `terraform apply -target=aws_ecs_service.backend` で設定を元に戻す
 
+### ECS タスクが起動中に ALB ヘルスチェックで落とされる場合
+- 原因: `health_check_grace_period_seconds` が 0 のため、Spring Boot 起動前に ALB の unhealthy 判定が発動する
+- このプロジェクトの設定: `unhealthy_threshold=3, interval=30` → 90 秒で unhealthy 判定
+- Spring Boot 起動時間（約 136 秒）> 90 秒 のためタスクが毎回停止するループになる
+- **対処:** `ecs.tf` の `aws_ecs_service` に `health_check_grace_period_seconds = 200` を設定して `terraform apply`
+- `startPeriod`（ECS コンテナヘルスチェック）と `health_check_grace_period_seconds`（ALB ヘルスチェック）は別物なので両方設定すること
+
 ### terraform apply の手順
 ```bash
 cd infra/terraform
