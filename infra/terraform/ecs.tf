@@ -72,6 +72,7 @@ resource "aws_ecs_service" "backend" {
 
   deployment_minimum_healthy_percent = 100
   deployment_maximum_percent         = 200
+  health_check_grace_period_seconds  = 200
 
   network_configuration {
     subnets          = [aws_subnet.private_a.id]
