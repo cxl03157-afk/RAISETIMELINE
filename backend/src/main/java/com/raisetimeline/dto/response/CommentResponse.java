@@ -1,5 +1,6 @@
 package com.raisetimeline.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.raisetimeline.entity.Comment;
 import lombok.Getter;
 
@@ -11,6 +12,7 @@ public class CommentResponse {
     private final Long id;
     private final String content;
     private final UserResponse user;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'", timezone = "UTC")
     private final LocalDateTime createdAt;
 
     public CommentResponse(Comment comment, String userAvatarUrl) {
