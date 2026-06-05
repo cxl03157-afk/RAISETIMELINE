@@ -31,7 +31,7 @@ npx tsc --noEmit
 ### テスト実行（必須）
 ```bash
 cd backend
-JAVA_HOME=/opt/homebrew/opt/openjdk@21 ./gradlew test
+JAVA_HOME=/Library/Java/JavaVirtualMachines/temurin-25.jdk/Contents/Home ./gradlew test
 ```
 全テストパスを確認すること。
 
@@ -91,6 +91,8 @@ terraform validate
 
 | 問題 | 原因 | 対策 |
 |------|------|------|
-| カード ID とリスト ID の名前空間衝突 | DnD の `id` に数字をそのまま使用 | `card-{id}` / `list-{id}` のプレフィックス付きで登録 |
-| JPA で PostgreSQL カスタム ENUM 型に書き込めない | `priority_type` は JPA の型変換が効かない | INSERT/UPDATE は `JdbcTemplate` で `CAST(? AS priority_type)` を明示 |
-| Hibernate L1 キャッシュが JdbcTemplate 更新を反映しない | 同一 EntityManager セッション内でキャッシュが古い | `@Transactional` + `em.clear()` をセットで使用 |
+| `spring.jackson.serialization.write-dates-as-timestamps: false` が Spring Boot 4 で起動エラー | `LenientObjectToEnumConverterFactory` の IllegalArgumentException | この設定は使わない。DTO の `LocalDateTime` フィールドに `@JsonFormat(timezone="UTC")` を付与する |
+| ECS タスクが起動中に ALB ヘルスチェックで落とされる | `health_check_grace_period_seconds` が未設定で Spring Boot 起動前に unhealthy 判定 | `aws_ecs_service` に `health_check_grace_period_seconds = 200` を設定する |
+| ECS デプロイが競合して新タスクが即停止するループ | `wait-for-service-stability: true` がタイムアウトして旧デプロイが ACTIVE のまま残存 | `cd-backend.yml` で `wait-for-service-stability` を削除する |
+| Amazon Linux 2023 で `xargs` がない | AL2023 に `findutils` が未インストール | Dockerfile に `RUN dnf install -y findutils shadow-utils` を追加する |
+| Amazon Linux 2023 で `adduser` コマンドがない | AL2023 では `useradd` を使う | `shadow-utils` をインストールして `useradd -u 1000 -M -s /sbin/nologin appuser` で作成 |
