@@ -14,8 +14,8 @@ RUN ./gradlew bootJar --no-daemon -x test
 # Stage 2: runtime
 FROM amazoncorretto:25-al2023-headless AS runtime
 WORKDIR /app
-RUN dnf install -y curl-minimal && dnf clean all
-RUN adduser --uid 1000 --no-create-home appuser
+RUN dnf install -y curl-minimal shadow-utils && dnf clean all
+RUN useradd -u 1000 -M -s /sbin/nologin appuser
 COPY --from=builder /app/build/libs/*.jar app.jar
 RUN chown appuser:appuser app.jar
 USER appuser
