@@ -23,8 +23,6 @@ spring:
     locations: classpath:db/migration
   jackson:
     time-zone: UTC
-    serialization:
-      write-dates-as-timestamps: false
 
 app:
   jwt:
